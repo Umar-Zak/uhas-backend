@@ -1,0 +1,19 @@
+{
+  "name": "uhas",
+  "version": "1.0.0",
+  "description": "An app to collect health data about women",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "uhas",
+  "license": "MIT",
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "config": "^3.3.6",
+    "express": "^4.17.2",
+    "joi": "^17.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.6"
+  }
+}
