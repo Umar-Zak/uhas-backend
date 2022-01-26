@@ -1,3 +1,4 @@
 {
-    "db":"mongodb://cloud-connect:0201348856@vidly-shard-00-00.cbt6r.mongodb.net:27017,vidly-shard-00-01.cbt6r.mongodb.net:27017,vidly-shard-00-02.cbt6r.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=vidly-shard-0&authSource=admin&retryWrites=true&w=majority"
+    "db":"mongodb://cloud-connect:0201348856@vidly-shard-00-00.cbt6r.mongodb.net:27017,vidly-shard-00-01.cbt6r.mongodb.net:27017,vidly-shard-00-02.cbt6r.mongodb.net:27017/uhas?ssl=true&replicaSet=vidly-shard-0&authSource=admin&retryWrites=true&w=majority",
+    "key":"MyDevKey"
 }

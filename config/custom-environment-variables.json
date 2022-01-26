@@ -1,3 +1,4 @@
 {
-    "db":"prod-db"
+    "db":"prod-db",
+    "key":"prod-key"
 }
