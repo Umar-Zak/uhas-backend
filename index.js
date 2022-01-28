@@ -1,5 +1,6 @@
 const express = require("express")
 const helmet = require("helmet")
+const cors = require("cors")
 const config = require("config")
 const mongoose = require("mongoose")
 const endpoints = require("./routes/endpoints")
@@ -9,8 +10,9 @@ mongoose.connect(config.get("db"))
 .catch(err=>console.log("Error connecting",err))
 app.use(express.json())
 app.use(helmet())
+app.use(cors())
 app.use("/api",endpoints)
 const PORT = process.env.PORT || 4200
-app.listen(PORT,()=>{
+app.listen(PORT,()=>{ 
     console.log(`App listening on port ${PORT}`)
 })
