@@ -7,6 +7,18 @@ const auth = require("../middleware/auth")
 const Router = express.Router()
 
 
+
+Router.get("/questions",auth,async(req,res)=>{
+  const questions = await Questionnaire.find()
+  res.send(questions)
+})
+
+
+Router.get("/users",auth,async(req,res)=>{
+  const users = await User.find()
+  res.send(users)
+})
+
 Router.post("/register",validateBody(validateSignUp),async(req,res)=>{
     const {email,password,username} = req.body
     let user = await User.findOne({email})
