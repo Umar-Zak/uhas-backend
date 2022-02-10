@@ -14,6 +14,14 @@ Router.get("/questions",auth,async(req,res)=>{
 })
 
 
+Router.get("/questions/:id",auth,async(req,res)=>{
+  const question = await Questionnaire.findOne({_id:req.params.id})
+  if (!question) res.status(404).send("Resource unavailable")
+
+  res.send(question)
+})
+
+
 Router.get("/users",auth,async(req,res)=>{
   const users = await User.find()
   res.send(users)
@@ -45,21 +53,37 @@ Router.post("/login",validateBody(validateLogin),async (req,res)=>{
 
 
 Router.post("/questions",[auth,validateBody(validateQuestionnaire)],async(req,res)=>{
-   const {patient,data} = req.body
+   
+      
+      
+   const {data,womanId,localityId,age,weight,height,hip,waist,fat,triceps,biceps,pressure} = req.body
    const questionnaire = new Questionnaire({
      officer:{
          name:req.user.username,
          email:req.user.email
      },
      data:data,
-     patient:{
-         id:patient
-     }
+     womanId,
+     localityId,
+     age,
+     weight,
+     height,
+     hip,
+     waist,
+     fat,triceps,biceps,pressure
    })
 
    
     await questionnaire.save()
     res.send(questionnaire)
+})
+
+Router.delete("/user/:id",auth,async(req,res)=>{
+  const user = await User.findOne({_id:req.params.id})
+  if(!user) return res.status(404).send("This resources is not available")
+
+  await User.deleteOne({_id:req.params.id})
+  res.send("User deleted")
 })
 
 module.exports = Router

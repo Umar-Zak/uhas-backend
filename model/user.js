@@ -7,11 +7,12 @@ const userSchema = mongoose.Schema({
     username:{type:String,required:true},
     email:{type:String, required:true},
     password:{type:String, required:true},
-    created_at:{type:String, default: new Date()}
+    created_at:{type:String, default: new Date()},
+    isAdmin:{type:Boolean,default:false}
 })
 
 userSchema.methods.genAuthToken = function(){
-    return Jwt.sign({_id:this._id, email:this.email,username:this.username,created_at:this.created_at},config.get("key"))
+    return Jwt.sign({_id:this._id, email:this.email,username:this.username,created_at:this.created_at,isAdmin:this.isAdmin},config.get("key"))
 }
 
 const User = mongoose.model("User",userSchema)
