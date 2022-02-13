@@ -1,11 +1,13 @@
 const express = require("express")
 const bcrypt = require("bcrypt")
+const multer = require("multer")
+const readXlsxFile = require('read-excel-file/node')
 const {User,validateLogin,validateSignUp} = require("../model/user")
 const {Questionnaire,validateQuestionnaire} = require("../model/quesionaire")
 const validateBody = require("../middleware/validateBody")
 const auth = require("../middleware/auth")
 const Router = express.Router()
-
+const upload = multer({ dest: 'uploads/' })
 
 
 Router.get("/questions",auth,async(req,res)=>{
@@ -49,6 +51,17 @@ Router.post("/login",validateBody(validateLogin),async (req,res)=>{
   if(!isValid) return res.status(400).send("Email or password incorrect")
 
   res.send(user.genAuthToken())
+})
+
+
+Router.post("/uploads",[auth,upload.single('excel')],async(req,res)=>{
+ readXlsxFile(req.file.path).then((rows) => {
+  // `rows` is an array of rows
+  // each row being an array of cells.
+  // console.log(rows)
+  res.send(rows)
+})
+
 })
 
 
