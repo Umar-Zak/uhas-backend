@@ -54,12 +54,55 @@ Router.post("/login",validateBody(validateLogin),async (req,res)=>{
 })
 
 
-Router.post("/uploads",[auth,upload.single('excel')],async(req,res)=>{
+Router.post("/uploads",[auth,upload.single('excel')], async(req,res)=>{
  readXlsxFile(req.file.path).then((rows) => {
-  // `rows` is an array of rows
-  // each row being an array of cells.
-  // console.log(rows)
-  res.send(rows)
+  const sections = {
+    a:"Section A: Background Information",
+    b:"Section B: Food Insecurity Experience Scale",
+    c:"Section C: Morbidity and Compliance",
+    d:"Section D: Gastrointestinal Side Effects"
+  }
+ let answers = rows.filter((r,index)=> index> 0)
+ let questions = rows[0].filter((q,index) => index >= 12)
+ for (let i= 0; i < answers.length; i++) {
+  const obviousAnsers = answers[i].filter((ob,index)=> index <= 12)
+  const abstractAnswers = answers[i].filter((ab,index)=>index >12)
+  const data = abstractAnswers.map((ab,index)=>{
+     let transformed = {answer:ab,quest:questions[index]}
+
+      if (index < 15) transformed.section = sections.a
+
+      if (index >= 15 && index < 24) transformed.section = sections.ab
+
+      if (index >= 24 && index < 37) transformed.section = sections.c
+
+      if(index >= 37) transformed.section = sections.d
+
+      return transformed
+   })
+   const quesionaire = new Questionnaire({
+     womanId:obviousAnsers[0],
+     localityId:obviousAnsers[1],
+     officer:{
+       name:req.user.username,
+       email:req.user.email
+     },
+     collected_on: new Date(obviousAnsers[3]),
+     height:obviousAnsers[4],
+     weight:obviousAnsers[5],
+     biceps:obviousAnsers[6],
+     triceps:obviousAnsers[7],
+     hip:obviousAnsers[8],
+     pressure:obviousAnsers[9],
+     fat:obviousAnsers[10],
+     age:obviousAnsers[11],
+     waist:obviousAnsers[12],
+     data
+   })
+   quesionaire.save().then(res=>console.log(res)).catch(err=>console.log(err))
+ }
+ 
+  res.send("Done")
 })
 
 })
