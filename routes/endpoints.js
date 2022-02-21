@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt")
 const multer = require("multer")
 const readXlsxFile = require('read-excel-file/node')
 const {User,validateLogin,validateSignUp} = require("../model/user")
-const {Questionnaire,validateQuestionnaire} = require("../model/quesionaire")
+const {Questionnaire,validateQuestionnaire,validateRequests,Request} = require("../model/quesionaire")
 const validateBody = require("../middleware/validateBody")
 const auth = require("../middleware/auth")
 const Router = express.Router()
@@ -15,6 +15,11 @@ Router.get("/questions",auth,async(req,res)=>{
   res.send(questions)
 })
 
+
+Router.get("/requests",auth,async(req,res)=>{
+  const requests = await Request.find()
+  res.send(requests)
+})
 
 Router.get("/questions/:id",auth,async(req,res)=>{
   const question = await Questionnaire.findOne({_id:req.params.id})
@@ -109,9 +114,6 @@ Router.post("/uploads",[auth,upload.single('excel')], async(req,res)=>{
 
 
 Router.post("/questions",[auth,validateBody(validateQuestionnaire)],async(req,res)=>{
-   
-      
-      
    const {data,womanId,localityId,age,weight,height,hip,waist,fat,triceps,biceps,pressure} = req.body
    const questionnaire = new Questionnaire({
      officer:{
@@ -132,6 +134,13 @@ Router.post("/questions",[auth,validateBody(validateQuestionnaire)],async(req,re
    
     await questionnaire.save()
     res.send(questionnaire)
+})
+
+Router.post("/requests",(validateBody(validateRequests)),async(req,res)=>{
+  const {email,name,phone} = req.body
+  const request = new Request({name,email,phone})
+   await request.save()
+   res.send(request)
 })
 
 Router.delete("/user/:id",auth,async(req,res)=>{

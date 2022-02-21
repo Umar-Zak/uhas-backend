@@ -1,5 +1,4 @@
 const mongoose = require("mongoose")
-const JOI = require("joi")
 const Joi = require("joi")
 
  
@@ -27,10 +26,17 @@ const questionaireSchema = mongoose.Schema({
     pressure:{type:Number,required:true}
 })
 
+const requestSchema = mongoose.Schema({
+    name:{type:String,required:true},
+    email:{type:String,required:true},
+    phone:{type:String,required:true}
+})
+
+const Request = mongoose.model("Request",requestSchema)
 
 function validateQuestionnaire(body){
-  const schema = JOI.object({
-      data:JOI.array().min(1).required(),
+  const schema = Joi.object({
+      data:Joi.array().min(1).required(),
       womanId:Joi.string().required(),
       localityId:Joi.string().required(),
       age:Joi.number().min(1).required(),
@@ -47,9 +53,22 @@ function validateQuestionnaire(body){
 }
 
 
+function validateRequests(body){
+    const schema = Joi.object({
+        name:Joi.string().required().label("Name"),
+        email:Joi.string().required().label("Email"),
+        phone:Joi.string().required().label("Phone number")
+    })
+
+    return schema.validate(body)
+}
+
+
 const Questionnaire = mongoose.model("Questionnaire",questionaireSchema)
 
 
 
 module.exports.Questionnaire = Questionnaire
 module.exports.validateQuestionnaire = validateQuestionnaire
+module.exports.validateRequests = validateRequests
+module.exports.Request = Request
