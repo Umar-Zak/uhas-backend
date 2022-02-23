@@ -3,9 +3,11 @@ const bcrypt = require("bcrypt")
 const multer = require("multer")
 const readXlsxFile = require('read-excel-file/node')
 const {User,validateLogin,validateSignUp} = require("../model/user")
-const {Questionnaire,validateQuestionnaire,validateRequests,Request} = require("../model/quesionaire")
+const {Questionnaire,validateQuestionnaire,validateRequests,Request,DataSet,validateDataSet,Project,validateProject,Paper,validatePaper} = require("../model/quesionaire")
 const validateBody = require("../middleware/validateBody")
 const auth = require("../middleware/auth")
+const req = require("express/lib/request")
+const res = require("express/lib/response")
 const Router = express.Router()
 const upload = multer({ dest: 'uploads/' })
 
@@ -19,6 +21,20 @@ Router.get("/questions",auth,async(req,res)=>{
 Router.get("/requests",auth,async(req,res)=>{
   const requests = await Request.find()
   res.send(requests)
+})
+
+Router.get("/datasets",async(req,res)=>{
+  const datasets = await DataSet.find()
+  res.send(datasets)
+})
+Router.get("/projects",async(req,res)=>{
+  const projects = await Project.find()
+  res.send(projects)
+})
+
+Router.get("/papers",async(req,res)=>{
+  const papers = await Paper.find()
+  res.send(papers)
 })
 
 Router.get("/questions/:id",auth,async(req,res)=>{
@@ -137,10 +153,32 @@ Router.post("/questions",[auth,validateBody(validateQuestionnaire)],async(req,re
 })
 
 Router.post("/requests",(validateBody(validateRequests)),async(req,res)=>{
-  const {email,name,phone} = req.body
-  const request = new Request({name,email,phone})
+  const {email,name,phone,description} = req.body
+  const request = new Request({name,email,phone,description})
    await request.save()
    res.send(request)
+})
+
+
+
+Router.post("/dataset",[auth,validateBody(validateDataSet)],async(req,res)=>{
+  const {title,description} = req.body
+  const dataset = new DataSet({title,description})
+  await dataset.save()
+  res.send(dataset)
+})
+Router.post("/project",[auth,validateBody(validateProject)],async(req,res)=>{
+  const {title,description} = req.body
+  const project = new Project({title,description})
+  await project.save()
+  res.send(project)
+})
+
+Router.post("/paper",[auth,validateBody(validatePaper)],async(req,res)=>{
+  const {file,heading} = req.body
+  const paper = new Paper({file,heading,user:req.user.username})
+  await paper.save()
+  res.send(paper)
 })
 
 Router.delete("/user/:id",auth,async(req,res)=>{
