@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt")
 const multer = require("multer")
 const readXlsxFile = require('read-excel-file/node')
 const {User,validateLogin,validateSignUp} = require("../model/user")
-const {Questionnaire,validateQuestionnaire,validateRequests,Request,DataSet,validateDataSet,Project,validateProject,Paper,validatePaper} = require("../model/quesionaire")
+const {Questionnaire,validateQuestionnaire,validateRequests,Request,DataSet,Zip,validateZip,validateDataSet,Project,validateProject,Paper,validatePaper} = require("../model/quesionaire")
 const validateBody = require("../middleware/validateBody")
 const auth = require("../middleware/auth")
 const req = require("express/lib/request")
@@ -35,6 +35,11 @@ Router.get("/projects",async(req,res)=>{
 Router.get("/papers",async(req,res)=>{
   const papers = await Paper.find()
   res.send(papers)
+})
+
+Router.get("/zips",auth,async(req,res)=>{
+  const zips = await Zip.find()
+  res.send(zips)
 })
 
 Router.get("/questions/:id",auth,async(req,res)=>{
@@ -159,6 +164,12 @@ Router.post("/requests",(validateBody(validateRequests)),async(req,res)=>{
    res.send(request)
 })
 
+
+Router.post("/zip",[auth,validateBody(validateZip)],async(req,res)=>{
+  const zip = new Zip({file:req.body.file})
+  await zip.save()
+  res.send(zip)
+})
 
 
 Router.post("/dataset",[auth,validateBody(validateDataSet)],async(req,res)=>{

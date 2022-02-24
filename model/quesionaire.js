@@ -60,6 +60,13 @@ const paperSchema = mongoose.Schema({
 
 const Paper = mongoose.model("Paper",paperSchema)
 
+const zipSchema = mongoose.Schema({
+    file:{type:String,required:true},
+    day_posted:{type:Date,default: new Date()}
+})
+
+const Zip = mongoose.model("Zip",zipSchema)
+
 function validateQuestionnaire(body){
   const schema = Joi.object({
       data:Joi.array().min(1).required(),
@@ -115,6 +122,13 @@ function validatePaper(body){
     return schema.validate(body)
 }
 
+function validateZip(body){
+    const schema = Joi.object({
+        file:Joi.string().required().label("Zip file")
+    })
+    return schema.validate(body)
+}
+
 const Questionnaire = mongoose.model("Questionnaire",questionaireSchema)
 
 
@@ -129,3 +143,5 @@ module.exports.Project = Project
 module.exports.validateProject = validateProject
 module.exports.Paper = Paper 
 module.exports.validatePaper = validatePaper
+module.exports.Zip = Zip
+module.exports.validateZip = validateZip
