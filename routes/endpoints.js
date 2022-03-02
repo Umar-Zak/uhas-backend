@@ -192,6 +192,24 @@ Router.post("/paper",[auth,validateBody(validatePaper)],async(req,res)=>{
   res.send(paper)
 })
 
+
+Router.put("/priv/:id",auth,async(req,res)=>{
+  const user = await User.findById(req.params.id)
+  if(!user) return res.status(404).send("This user is unavailable") 
+
+  if(user.isAdmin){
+    user.isAdmin = false
+    await user.save()
+  }
+   
+  else {
+    user.isAdmin = true
+    await user.save()
+  }
+
+  res.send(user)
+})
+
 Router.delete("/user/:id",auth,async(req,res)=>{
   const user = await User.findOne({_id:req.params.id})
   if(!user) return res.status(404).send("This resources is not available")
