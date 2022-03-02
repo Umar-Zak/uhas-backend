@@ -158,8 +158,8 @@ Router.post("/questions",[auth,validateBody(validateQuestionnaire)],async(req,re
 })
 
 Router.post("/requests",(validateBody(validateRequests)),async(req,res)=>{
-  const {email,name,phone,description} = req.body
-  const request = new Request({name,email,phone,description})
+  const {email,name,phone,description,reason} = req.body
+  const request = new Request({name,email,phone,description,reason})
    await request.save()
    res.send(request)
 })
@@ -186,8 +186,8 @@ Router.post("/project",[auth,validateBody(validateProject)],async(req,res)=>{
 })
 
 Router.post("/paper",[auth,validateBody(validatePaper)],async(req,res)=>{
-  const {file,heading} = req.body
-  const paper = new Paper({file,heading,user:req.user.username})
+  const {file,heading,type} = req.body
+  const paper = new Paper({file,heading,user:req.user.username,type})
   await paper.save()
   res.send(paper)
 })
@@ -198,6 +198,30 @@ Router.delete("/user/:id",auth,async(req,res)=>{
 
   await User.deleteOne({_id:req.params.id})
   res.send("User deleted")
+})
+
+Router.delete("/datasets/:id",auth,async(req,res)=>{
+  const dataset = await DataSet.findById(req.params.id)
+  if(!dataset) return res.status(404).send("This dataset is unavailable")
+
+  await DataSet.deleteOne({_id:req.params.id})
+  res.send("Deleted")
+})
+
+Router.delete("/papers/:id",auth,async(req,res)=>{
+  const paper = await Paper.findById(req.params.id)
+  if(!paper) return res.status(404).send("This paper is unavailable")
+
+  await Paper.deleteOne({_id:req.params.id})
+  res.send("Deleted")
+})
+
+Router.delete("/projects/:id",auth,async(req,res)=>{
+  const project = await Project.findById(req.params.id)
+  if(!project) return res.status(404).send("This paper is unavailable")
+
+  await Project.deleteOne({_id:req.params.id})
+  res.send("Deleted")
 })
 
 module.exports = Router

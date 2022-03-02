@@ -30,7 +30,8 @@ const requestSchema = mongoose.Schema({
     name:{type:String,required:true},
     email:{type:String,required:true},
     phone:{type:String,required:true},
-    description:{type:String,required:true}
+    description:{type:String,required:true},
+    reason:{type:String,required:true}
 })
 
 const Request = mongoose.model("Request",requestSchema)
@@ -55,7 +56,8 @@ const paperSchema = mongoose.Schema({
     file:{type:String,required:true},
     heading:{type:String,required:true},
     user:{type:String,required:true},
-    date:{type:Date, default:new Date()}
+    date:{type:Date, default:new Date()},
+    type:{type:String,required:true,default:"faculty"}
 })
 
 const Paper = mongoose.model("Paper",paperSchema)
@@ -91,7 +93,8 @@ function validateRequests(body){
         name:Joi.string().required().label("Name"),
         email:Joi.string().required().label("Email"),
         phone:Joi.string().required().label("Phone number"),
-        description:Joi.string().required().label("Description")
+        description:Joi.string().required().label("Description"),
+        reason:Joi.string().required().label("Reason for request")
     })
 
     return schema.validate(body)
@@ -117,7 +120,8 @@ function validateProject(body){
 function validatePaper(body){
     const schema = Joi.object({
         file:Joi.string().required().label("Paper file"),
-        heading:Joi.string().required().label("Paper heading")
+        heading:Joi.string().required().label("Paper heading"),
+        type:Joi.string().required().label("Paper type")
     })
     return schema.validate(body)
 }
