@@ -26,6 +26,15 @@ const questionaireSchema = mongoose.Schema({
     pressure:{type:Number,required:true}
 })
 
+const secondQuestionaireSchema = mongoose.Schema({
+    officer:{type:mongoose.Schema({
+        name:{type:String,required:true},
+        email:{type:String,required:true}
+    })},
+    collected_on:{type:Date, default:new Date()},
+    data:{type:[]},
+})
+
 const requestSchema = mongoose.Schema({
     name:{type:String,required:true},
     email:{type:String,required:true},
@@ -86,7 +95,14 @@ function validateQuestionnaire(body){
   })
   return schema.validate(body)
 }
-
+function validateSecondQuestionnaire(body){
+    const schema = Joi.object({
+        data:Joi.array().min(1).required().label("Questionnaire"),
+         
+    })
+    return schema.validate(body)
+  }
+  
 
 function validateRequests(body){
     const schema = Joi.object({
@@ -134,7 +150,7 @@ function validateZip(body){
 }
 
 const Questionnaire = mongoose.model("Questionnaire",questionaireSchema)
-
+const SecondQuestionaire = mongoose.model("SecondQuestionaire",secondQuestionaireSchema)
 
 
 module.exports.Questionnaire = Questionnaire
@@ -149,3 +165,5 @@ module.exports.Paper = Paper
 module.exports.validatePaper = validatePaper
 module.exports.Zip = Zip
 module.exports.validateZip = validateZip
+module.exports.SecondQuestionaire = SecondQuestionaire
+module.exports.validateSecondQuestionnaire = validateSecondQuestionnaire

@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt")
 const multer = require("multer")
 const readXlsxFile = require('read-excel-file/node')
 const {User,validateLogin,validateSignUp} = require("../model/user")
-const {Questionnaire,validateQuestionnaire,validateRequests,Request,DataSet,Zip,validateZip,validateDataSet,Project,validateProject,Paper,validatePaper} = require("../model/quesionaire")
+const {Questionnaire,SecondQuestionaire,validateSecondQuestionnaire,validateQuestionnaire,validateRequests,Request,DataSet,Zip,validateZip,validateDataSet,Project,validateProject,Paper,validatePaper} = require("../model/quesionaire")
 const validateBody = require("../middleware/validateBody")
 const auth = require("../middleware/auth")
 const req = require("express/lib/request")
@@ -155,6 +155,20 @@ Router.post("/questions",[auth,validateBody(validateQuestionnaire)],async(req,re
    
     await questionnaire.save()
     res.send(questionnaire)
+})
+
+Router.post("/second-questions",[auth,validateBody(validateSecondQuestionnaire)],async(req,res)=>{
+  const {data} = req.body
+  const questionnaire = new SecondQuestionaire({
+    officer:{
+        name:req.user.username,
+        email:req.user.email
+    },
+    data:data,
+  })
+
+   await questionnaire.save()
+   res.send(questionnaire)
 })
 
 Router.post("/requests",(validateBody(validateRequests)),async(req,res)=>{
