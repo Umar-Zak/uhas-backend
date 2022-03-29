@@ -17,6 +17,11 @@ Router.get("/questions",auth,async(req,res)=>{
   res.send(questions)
 })
 
+Router.get("/second-questions",auth,async(req,res)=>{
+  const questions = await SecondQuestionaire.find()
+  res.send(questions)
+})
+
 
 Router.get("/requests",auth,async(req,res)=>{
   const requests = await Request.find()
