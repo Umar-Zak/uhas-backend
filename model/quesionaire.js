@@ -1,10 +1,17 @@
+// importing third party modules needed for this module
 const mongoose = require("mongoose")
 const Joi = require("joi")
 
+
+// This module(file) contains the schemas for the datase objects. 
+//Each schema is explained below
  
            
            
          
+// Below is the schema for the Questionare objects. 
+// Objects in mongoDb is the same as a row of a table in SQL or MySQL
+// Below represent how each object(row) is suppossed to be
 
 const questionaireSchema = mongoose.Schema({
     officer:{type:mongoose.Schema({
@@ -26,6 +33,8 @@ const questionaireSchema = mongoose.Schema({
     pressure:{type:Number,required:true}
 })
 
+// This the schema for the second questionaire. It follows the same pattern as the above
+
 const secondQuestionaireSchema = mongoose.Schema({
     officer:{type:mongoose.Schema({
         name:{type:String,required:true},
@@ -35,6 +44,9 @@ const secondQuestionaireSchema = mongoose.Schema({
     data:{type:[]},
 })
 
+
+// Below is the schema for the 'data request' feature.
+
 const requestSchema = mongoose.Schema({
     name:{type:String,required:true},
     email:{type:String,required:true},
@@ -43,24 +55,29 @@ const requestSchema = mongoose.Schema({
     reason:{type:String,required:true}
 })
 
+// Below is the model for the 'data request' feature.
 const Request = mongoose.model("Request",requestSchema)
 
-
+// This is the 'dataset' feature schema.
 const datasetSchema = mongoose.Schema({
     title:{type:String,required:true},
     description:{type:String,required:true}
 })
 
+// Below is the model for the 'dataset' feature.
 const DataSet = mongoose.model("DataSet",datasetSchema)
 
+// Below is the 'add project' feature schema.
 const projectSchema = mongoose.Schema({
     title:{type:String,required:true},
     description:{type:String,required:true}
 })
 
+// Below represents the model for 'add project' feature.
 const Project = mongoose.model("Project",projectSchema)
 
 
+// Below is the 'upload paper work' schema.
 const paperSchema = mongoose.Schema({
     file:{type:String,required:true},
     heading:{type:String,required:true},
@@ -69,15 +86,21 @@ const paperSchema = mongoose.Schema({
     type:{type:String,required:true,default:"faculty"}
 })
 
+// This is the 'paper work'  model.
 const Paper = mongoose.model("Paper",paperSchema)
 
+
+// This is the 'upload zip' feature schema.
 const zipSchema = mongoose.Schema({
     file:{type:String,required:true},
     day_posted:{type:Date,default: new Date()}
 })
 
+// Below is the 'upload zip' model
 const Zip = mongoose.model("Zip",zipSchema)
 
+//Below is the function that validates the form the user
+// fills when taking the first questionnaire
 function validateQuestionnaire(body){
   const schema = Joi.object({
       data:Joi.array().min(1).required(),
@@ -95,6 +118,9 @@ function validateQuestionnaire(body){
   })
   return schema.validate(body)
 }
+
+// Below is the function that validates and makes sure the second questionnaire
+// is properly taken before submitted
 function validateSecondQuestionnaire(body){
     const schema = Joi.object({
         data:Joi.array().min(1).required().label("Questionnaire"),
@@ -103,7 +129,8 @@ function validateSecondQuestionnaire(body){
     return schema.validate(body)
   }
   
-
+// Below is the function that validates the form a user
+// fills when requesting for data
 function validateRequests(body){
     const schema = Joi.object({
         name:Joi.string().required().label("Name"),
@@ -116,6 +143,8 @@ function validateRequests(body){
     return schema.validate(body)
 }
 
+// Below is the  function that validates the form an admin
+// fills when adding a dataset
 function validateDataSet(body){
     const schema = Joi.object({
         title:Joi.string().required().label("Dataset title"),
@@ -124,6 +153,9 @@ function validateDataSet(body){
     return  schema.validate(body)
 }
 
+
+// Below is the function that validates the form an admin
+// fills when adding a projects
 function validateProject(body){
     const schema = Joi.object({
         title:Joi.string().required().label("Project title"),
@@ -132,7 +164,8 @@ function validateProject(body){
     return  schema.validate(body)
 }
 
-
+// This is the function that validates the form an admin
+// fills when uploading a paperwork
 function validatePaper(body){
     const schema = Joi.object({
         file:Joi.string().required().label("Paper file"),
@@ -142,6 +175,9 @@ function validatePaper(body){
     return schema.validate(body)
 }
 
+
+// This is the function that validates the form an admin
+// fills when uploading a paperwork
 function validateZip(body){
     const schema = Joi.object({
         file:Joi.string().required().label("Zip file")
@@ -149,10 +185,12 @@ function validateZip(body){
     return schema.validate(body)
 }
 
+// The below code are instantiating the questionnaire and second questionnaire models
 const Questionnaire = mongoose.model("Questionnaire",questionaireSchema)
 const SecondQuestionaire = mongoose.model("SecondQuestionaire",secondQuestionaireSchema)
 
 
+// The below code exports the various pieces to be accessible in other modules(files)
 module.exports.Questionnaire = Questionnaire
 module.exports.validateQuestionnaire = validateQuestionnaire
 module.exports.validateRequests = validateRequests
