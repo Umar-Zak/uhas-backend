@@ -1,52 +1,79 @@
+// importing third party modules(libraries) needed for this module
 const express = require("express")
 const bcrypt = require("bcrypt")
 const multer = require("multer")
 const readXlsxFile = require('read-excel-file/node')
+const upload = multer({ dest: 'uploads/' })
+
+// importing the local modules(modules from this project) needed for this module
 const {User,validateLogin,validateSignUp} = require("../model/user")
 const {Questionnaire,SecondQuestionaire,validateSecondQuestionnaire,validateQuestionnaire,validateRequests,Request,DataSet,Zip,validateZip,validateDataSet,Project,validateProject,Paper,validatePaper} = require("../model/quesionaire")
 const validateBody = require("../middleware/validateBody")
 const auth = require("../middleware/auth")
 const req = require("express/lib/request")
 const res = require("express/lib/response")
+
+// Instantiating express router
 const Router = express.Router()
-const upload = multer({ dest: 'uploads/' })
 
 
+
+
+// This route handler handles the querying the questionnaire model.
+// It makes use of the auth middleware making sure the user is signedin
 Router.get("/questions",auth,async(req,res)=>{
   const questions = await Questionnaire.find()
   res.send(questions)
 })
 
+// This route handler handles the querying the second questionnaire model
+// It also makes use of the auth middleware making sure the user is signin
 Router.get("/second-questions",auth,async(req,res)=>{
   const questions = await SecondQuestionaire.find()
   res.send(questions)
 })
 
 
+// This route handler handles the querying of the data requests from
+// the admin dashboard.
 Router.get("/requests",auth,async(req,res)=>{
   const requests = await Request.find()
   res.send(requests)
 })
 
+// This route handler handles the fetching of datasets uploaded by 
+// the admins from the dashboard
 Router.get("/datasets",async(req,res)=>{
   const datasets = await DataSet.find()
   res.send(datasets)
 })
+
+// This route handler handles the fetching of projects added by the 
+// admins from the dashboard
 Router.get("/projects",async(req,res)=>{
   const projects = await Project.find()
   res.send(projects)
 })
 
+
+// here below, the rouet handler handles fetching of uploaded papers
+// by the admins from the dashboard.
 Router.get("/papers",async(req,res)=>{
   const papers = await Paper.find()
   res.send(papers)
 })
 
+// This handler fetches the zip files uploaded by  the admin on the 
+// dashboard. It uses the auth middleware to make sure the admin is authenticated
 Router.get("/zips",auth,async(req,res)=>{
   const zips = await Zip.find()
   res.send(zips)
 })
 
+
+// This route handler fetches a particular questionnaire depending on the id
+// passed to the route. It makes use of the auth middleware making sure the admin 
+// is authenticated.
 Router.get("/questions/:id",auth,async(req,res)=>{
   const question = await Questionnaire.findOne({_id:req.params.id})
   if (!question) res.status(404).send("Resource unavailable")
@@ -55,10 +82,15 @@ Router.get("/questions/:id",auth,async(req,res)=>{
 })
 
 
+// This is the route handler that fetches all user to be displayed on
+// the dashboard
 Router.get("/users",auth,async(req,res)=>{
   const users = await User.find()
   res.send(users)
 })
+
+
+// Below route handler handles a post request. It handles the register/ signup feature
 
 Router.post("/register",validateBody(validateSignUp),async(req,res)=>{
     const {email,password,username} = req.body
@@ -73,6 +105,8 @@ Router.post("/register",validateBody(validateSignUp),async(req,res)=>{
 
 })
 
+// This is the route handler that handles the login feature.
+// It is important to note the usage of the validateBody middleware.
 Router.post("/login",validateBody(validateLogin),async (req,res)=>{
   const {email,password} = req.body
   const user =await  User.findOne({email})
@@ -85,6 +119,9 @@ Router.post("/login",validateBody(validateLogin),async (req,res)=>{
 })
 
 
+// This the route handler handles the uploads of excel files from
+// the dashboard. The route handler makes use of the multer module to 
+// facilitate the upload
 Router.post("/uploads",[auth,upload.single('excel')], async(req,res)=>{
  readXlsxFile(req.file.path).then((rows) => {
   const sections = {
@@ -138,7 +175,10 @@ Router.post("/uploads",[auth,upload.single('excel')], async(req,res)=>{
 
 })
 
-
+// This route handler handles the posting of questionnaire taken.
+// It is important to note the middleware used here(auth and validateBody)
+// The implementation of these middlware can be found in their respective files
+// in the middleware folder
 Router.post("/questions",[auth,validateBody(validateQuestionnaire)],async(req,res)=>{
    const {data,womanId,localityId,age,weight,height,hip,waist,fat,triceps,biceps,pressure} = req.body
    const questionnaire = new Questionnaire({
@@ -162,6 +202,9 @@ Router.post("/questions",[auth,validateBody(validateQuestionnaire)],async(req,re
     res.send(questionnaire)
 })
 
+
+// This route handler handles the posting of the second questionnaire taken
+// this route handler follows the same principle as the one above
 Router.post("/second-questions",[auth,validateBody(validateSecondQuestionnaire)],async(req,res)=>{
   const {data} = req.body
   const questionnaire = new SecondQuestionaire({
@@ -176,6 +219,8 @@ Router.post("/second-questions",[auth,validateBody(validateSecondQuestionnaire)]
    res.send(questionnaire)
 })
 
+
+// This is the route handler that handles the posting of data requests
 Router.post("/requests",(validateBody(validateRequests)),async(req,res)=>{
   const {email,name,phone,description,reason} = req.body
   const request = new Request({name,email,phone,description,reason})
@@ -184,19 +229,22 @@ Router.post("/requests",(validateBody(validateRequests)),async(req,res)=>{
 })
 
 
+// This route handler handles the posting/uploading of zip files
 Router.post("/zip",[auth,validateBody(validateZip)],async(req,res)=>{
   const zip = new Zip({file:req.body.file})
   await zip.save()
   res.send(zip)
 })
 
-
+// This route handler handles the posting of datasets
 Router.post("/dataset",[auth,validateBody(validateDataSet)],async(req,res)=>{
   const {title,description} = req.body
   const dataset = new DataSet({title,description})
   await dataset.save()
   res.send(dataset)
 })
+
+// This route handler handles the posting of projects
 Router.post("/project",[auth,validateBody(validateProject)],async(req,res)=>{
   const {title,description} = req.body
   const project = new Project({title,description})
@@ -204,6 +252,8 @@ Router.post("/project",[auth,validateBody(validateProject)],async(req,res)=>{
   res.send(project)
 })
 
+
+// Below is the route handler that handles the posting of paper works
 Router.post("/paper",[auth,validateBody(validatePaper)],async(req,res)=>{
   const {file,heading,type} = req.body
   const paper = new Paper({file,heading,user:req.user.username,type})
@@ -212,6 +262,7 @@ Router.post("/paper",[auth,validateBody(validatePaper)],async(req,res)=>{
 })
 
 
+// This is the route handler that handles the alteration of user privileges
 Router.put("/priv/:id",auth,async(req,res)=>{
   const user = await User.findById(req.params.id)
   if(!user) return res.status(404).send("This user is unavailable") 
@@ -229,6 +280,8 @@ Router.put("/priv/:id",auth,async(req,res)=>{
   res.send(user)
 })
 
+
+// Below is the route handler that handles the 'delete user' feature
 Router.delete("/user/:id",auth,async(req,res)=>{
   const user = await User.findOne({_id:req.params.id})
   if(!user) return res.status(404).send("This resources is not available")
@@ -237,6 +290,8 @@ Router.delete("/user/:id",auth,async(req,res)=>{
   res.send("User deleted")
 })
 
+
+// Below is the route handler that handles the "delete dataset" feature
 Router.delete("/datasets/:id",auth,async(req,res)=>{
   const dataset = await DataSet.findById(req.params.id)
   if(!dataset) return res.status(404).send("This dataset is unavailable")
@@ -245,6 +300,7 @@ Router.delete("/datasets/:id",auth,async(req,res)=>{
   res.send("Deleted")
 })
 
+// This is the route handler that handles the 'delete paper' feature
 Router.delete("/papers/:id",auth,async(req,res)=>{
   const paper = await Paper.findById(req.params.id)
   if(!paper) return res.status(404).send("This paper is unavailable")
@@ -253,6 +309,8 @@ Router.delete("/papers/:id",auth,async(req,res)=>{
   res.send("Deleted")
 })
 
+
+// Below is the route handler that handles the 'delete project' feature
 Router.delete("/projects/:id",auth,async(req,res)=>{
   const project = await Project.findById(req.params.id)
   if(!project) return res.status(404).send("This paper is unavailable")
@@ -261,5 +319,6 @@ Router.delete("/projects/:id",auth,async(req,res)=>{
   res.send("Deleted")
 })
 
+// exporting the route handler to be used in the app entry
 module.exports = Router
 
