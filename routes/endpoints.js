@@ -255,10 +255,20 @@ Router.post("/project",[auth,validateBody(validateProject)],async(req,res)=>{
 
 // Below is the route handler that handles the posting of paper works
 Router.post("/paper",[auth,validateBody(validatePaper)],async(req,res)=>{
-  const {file,heading,type} = req.body
-  const paper = new Paper({file,heading,user:req.user.username,type})
+  const {file,heading,type, author} = req.body
+  const paper = new Paper({file,heading,user:author,type , isApproved: type === "student"? false: true})
   await paper.save()
   res.send(paper)
+})
+
+
+
+Router.put("/approve-paper/:id",[auth],async(req, res)=> {
+  const paper = await Paper.findById(req.params.id)
+  paper.isApproved = !paper.isApproved
+  await paper.save()
+  res.send(paper)
+  
 })
 
 

@@ -83,7 +83,8 @@ const paperSchema = mongoose.Schema({
     heading:{type:String,required:true},
     user:{type:String,required:true},
     date:{type:Date, default:new Date()},
-    type:{type:String,required:true,default:"faculty"}
+    type:{type:String,required:true,default:"faculty"},
+    isApproved:{type:Boolean, default:true}
 })
 
 // This is the 'paper work'  model.
@@ -170,7 +171,8 @@ function validatePaper(body){
     const schema = Joi.object({
         file:Joi.string().required().label("Paper file"),
         heading:Joi.string().required().label("Paper heading"),
-        type:Joi.string().required().label("Paper type")
+        type:Joi.string().required().label("Paper type"),
+        author:Joi.string().required().label("Author")
     })
     return schema.validate(body)
 }
