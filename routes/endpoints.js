@@ -231,7 +231,8 @@ Router.post("/requests",(validateBody(validateRequests)),async(req,res)=>{
 
 // This route handler handles the posting/uploading of zip files
 Router.post("/zip",[auth,validateBody(validateZip)],async(req,res)=>{
-  const zip = new Zip({file:req.body.file})
+  const {file, name, description} = req.body
+  const zip = new Zip({file, name, description})
   await zip.save()
   res.send(zip)
 })
@@ -328,6 +329,15 @@ Router.delete("/projects/:id",auth,async(req,res)=>{
   await Project.deleteOne({_id:req.params.id})
   res.send("Deleted")
 })
+
+Router.delete("/questionnaire/:id",auth,async(req,res)=>{
+  const questionnaire = await Questionnaire.findById(req.params.id)
+  if(!questionnaire) return res.status(404).send("This questionnaire is unavailable")
+
+  await Questionnaire.deleteOne({_id:req.params.id})
+  res.send("Deleted")
+})
+
 
 // exporting the route handler to be used in the app entry
 module.exports = Router

@@ -94,7 +94,9 @@ const Paper = mongoose.model("Paper",paperSchema)
 // This is the 'upload zip' feature schema.
 const zipSchema = mongoose.Schema({
     file:{type:String,required:true},
-    day_posted:{type:Date,default: new Date()}
+    day_posted:{type:Date,default: new Date()},
+    name:{type:String, required:true},
+    description:{type:String, required:true}
 })
 
 // Below is the 'upload zip' model
@@ -182,7 +184,9 @@ function validatePaper(body){
 // fills when uploading a paperwork
 function validateZip(body){
     const schema = Joi.object({
-        file:Joi.string().required().label("Zip file")
+        file:Joi.string().required().label("Zip file"),
+        name:Joi.string().required().label("Name of  zip file"),
+        description:Joi.string().required().label("Description")
     })
     return schema.validate(body)
 }
