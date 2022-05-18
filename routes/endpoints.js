@@ -285,9 +285,22 @@ Router.put("/priv/:id",auth,async(req,res)=>{
    
   else {
     user.isAdmin = true
+    user.isGuest = false
     await user.save()
   }
 
+  res.send(user)
+})
+
+
+Router.put("/guest/:id",auth,async(req,res)=>{
+  const user = await User.findById(req.params.id)
+  if(!user) return res.status(404).send("This user is unavailable") 
+ 
+    user.isGuest = true
+    user.isAdmin = false
+    await user.save()
+ 
   res.send(user)
 })
 

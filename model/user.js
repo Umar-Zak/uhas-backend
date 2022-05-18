@@ -11,13 +11,14 @@ const userSchema = mongoose.Schema({
     email:{type:String, required:true},
     password:{type:String, required:true},
     created_at:{type:String, default: new Date()},
-    isAdmin:{type:Boolean,default:false}
+    isAdmin:{type:Boolean,default:false},
+    isGuest: {type: Boolean, default: false}
 })
 
 // From, the below code, I'm attaching a method to the user schema
 // that generates the user's authentication token when the signup or signin
 userSchema.methods.genAuthToken = function(){
-    return Jwt.sign({_id:this._id, email:this.email,username:this.username,created_at:this.created_at,isAdmin:this.isAdmin},config.get("key"))
+    return Jwt.sign({_id:this._id, email:this.email,username:this.username,created_at:this.created_at,isAdmin:this.isAdmin, isGuest: this.isGuest},config.get("key"))
 }
 
 
