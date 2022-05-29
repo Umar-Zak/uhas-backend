@@ -65,7 +65,7 @@ Router.get("/papers",async(req,res)=>{
 
 // This handler fetches the zip files uploaded by  the admin on the 
 // dashboard. It uses the auth middleware to make sure the admin is authenticated
-Router.get("/zips",auth,async(req,res)=>{
+Router.get("/zips",async(req,res)=>{
   const zips = await Zip.find()
   res.send(zips)
 })
@@ -272,6 +272,14 @@ Router.put("/approve-paper/:id",[auth],async(req, res)=> {
   
 })
 
+
+Router.put("/approve-dataset/:id",[auth],async(req, res)=> {
+  const paper = await Zip.findById(req.params.id)
+  paper.isApproved = !paper.isApproved
+  await paper.save()
+  res.send(paper)
+  
+})
 
 // This is the route handler that handles the alteration of user privileges
 Router.put("/priv/:id",auth,async(req,res)=>{

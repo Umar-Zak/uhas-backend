@@ -96,7 +96,8 @@ const zipSchema = mongoose.Schema({
     file:{type:String,required:true},
     day_posted:{type:Date,default: new Date()},
     name:{type:String, required:true},
-    description:{type:String, required:true}
+    description:{type:String, required:true},
+    isApproved: {type: Boolean, default: false}
 })
 
 // Below is the 'upload zip' model
