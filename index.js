@@ -29,58 +29,58 @@ const PORT = process.env.PORT || 4200
 app.listen(PORT, async    () => { 
     console.log(`App listening on port ${PORT}`)
     // const question = new Question({
-    //     question: `GPS coordinate of Food outlet`,
-    //     section: "C",
-    //     title: "FOOD PROVISION/RETAIL OUTLET MAPPING PROXIMAL TO SCHOOLS",
+    //     question: `Are there disposal mechanisms for menstrual hygiene waste at the school?`,
+    //     section: "H",
+    //     title: "Assessment of School’s Water, sanitation and hygiene (WASH) situations in Schools (Adapted from UNHCR and GES checklist for Schools)",
     //     options: [
-    //         // {
-    //         //     type: "radio",
-    //         //     value: "Yes"
-    //         // },
-    //         // {
-    //         //     type: "radio",
-    //         //     value: "No"
-    //         // },
-    //         // {
-    //         //     type: "radio",
-    //         //     value: "Both self and assisted service"
-    //         // },
-    //         // {
-    //         //     type: "radio",
-    //         //     value: "Food stall/stand"
-    //         // },
-    //         // {
-    //         //     type: "radio",
-    //         //     value: "Tabletop"
-    //         // },
-    //         // {
-    //         //     type: "radio",
-    //         //     value: "Restaurant"
-    //         // },
-    //         // {
-    //         //     type: "radio",
-    //         //     value: "Chop bar"
-    //         // },
-    //         // {
-    //         //     type: "radio",
-    //         //     value: "Cold store’"
-    //         // },
-    //         // {
-    //         //     type: "radio",
-    //         //     value: "Chain/ Franchising"
-    //         // },
-    //         // {
-    //         //     type: "radio",
-    //         //     value: "Individual"
-    //         // },
-    //         // {
-    //         //     type: "radio",
-    //         //     value: "Partnership"
-    //         // },
     //         {
-    //             type: "text",
-    //             value: "Coordinates"
+    //             type: "radio",
+    //             value: "Yes"
     //         },
+    //         {
+    //             type: "radio",
+    //             value: "No"
+    //         },
+    //         // {
+    //         //     type: "radio",
+    //         //     value: "MHM education"
+    //         // },
+    //         // {
+    //         //     type: "radio",
+    //         //     value: "Openly dumped on premises"
+    //         // },
+    //         // {
+    //         //     type: "radio",
+    //         //     value: "Pit latrine without slab/open"
+    //         // },
+    //         // {
+    //         //     type: "radio",
+    //         //     value: "Bucket "
+    //         // },
+    //         // {
+    //         //     type: "radio",
+    //         //     value: "Hanging toilet/latrine"
+    //         // },
+    //         // {
+    //         //     type: "radio",
+    //         //     value: "None"
+    //         // },
+    //         // {
+    //         //     type: "radio",
+    //         //     value: "Surface water (River/Lake/Canal)"
+    //         // },
+    //         // {
+    //         //     type: "radio",
+    //         //     value: "No water sources"
+    //         // },
+    //         // {
+    //         //     type: "radio",
+    //         //     value: "Bakery"
+    //         // },
+    //         // {
+    //         //     type: "text",
+    //         //     value: "Others(specify)"
+    //         // },
     //     ]
     // })
 
