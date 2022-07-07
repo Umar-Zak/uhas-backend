@@ -8,6 +8,7 @@ const config = require("config")
 const mongoose = require("mongoose")
 const endpoints = require("./routes/endpoints")
 const questionsRoute = require("./routes/questions")
+const projectRoute = require("./routes/projects")
 const {Question}  = require("./model/Questions")
 // Instantiating the app server below
 const app = express()
@@ -21,8 +22,10 @@ mongoose.connect(config.get("db"))
 app.use(express.json())
 app.use(helmet())
 app.use(cors())
+app.use("/api/project", projectRoute)
 app.use("/api",endpoints)
 app.use("/api/second", questionsRoute)
+
 const PORT = process.env.PORT || 4200
 
 // The app server listening to connections below
