@@ -38,6 +38,42 @@ const QuestionSchema = mongoose.Schema({
 
 const SectionQuestion = mongoose.model("SectionQuestion", QuestionSchema)
 
+const ProjectStudentSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    project_id: {
+        type: String,
+        required: true
+    }
+
+})
+
+const ProjectStudent = mongoose.model("ProjectStudent", ProjectStudentSchema)
+
+
+
+const ProjectQuestionAnsweredSchema = mongoose.Schema({
+    profileId: {
+        type: mongoose.Types.ObjectId,
+        ref: "ProjectStudent"
+    },
+    question: {
+        type: {},
+    },
+    answer: {
+        type: String,
+        required: true
+    },
+    posted_on: {
+        type: Date,
+        default: new Date()
+    }
+})
+
+const ProjectQuestionAnswered = mongoose.model("ProjectQuestionAnswered", ProjectQuestionAnsweredSchema)
+
 
 function validateProject(body) {
     const schema = Joi.object({
@@ -66,9 +102,31 @@ function validateQuestion(body) {
 }
 
 
+function validateProjectStudent(body) {
+    const schema = Joi.object({
+        name: Joi.string().required().label("Project name"),
+        project_id: Joi.string().required().label("Project ID"),
+    })
+    return schema.validate(body)
+}
+
+function validateAnswered(body){
+    const schema = Joi.object({
+        student: Joi.string().required().label("StudentID"),
+        answers: Joi.array().min(1).label("Answer")
+    })
+
+    return schema.validate(body)
+}
+
+
 module.exports.Project = Project
 module.exports.Section = Section
 module.exports.SectionQuestion = SectionQuestion
 module.exports.validateProject = validateProject
 module.exports.validateProjectSection = validateProjectSection
 module.exports.validateQuestion = validateQuestion
+module.exports.ProjectStudent = ProjectStudent
+module.exports.ProjectQuestionAnswered = ProjectQuestionAnswered
+module.exports.validateProjectStudent = validateProjectStudent
+module.exports.validateAnswered = validateAnswered

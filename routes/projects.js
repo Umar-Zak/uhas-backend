@@ -1,7 +1,7 @@
 const express = require("express")
 const auth = require("../middleware/auth")
 const validateBody = require("../middleware/validateBody")
-const {Project, validateProject, Section, validateProjectSection, validateQuestion, SectionQuestion}  = require("../model/project")
+const {Project, validateProject, Section, validateProjectSection, validateQuestion, SectionQuestion, ProjectQuestionAnswered, validateAnswered, validateProjectStudent, ProjectStudent}  = require("../model/project")
 
 
 const Router = express.Router()
@@ -14,6 +14,17 @@ const Router = express.Router()
   
  })
 
+ Router.get("/answers/:id", auth, async(req, res) => {
+   const answers = await ProjectQuestionAnswered.find({profileId: req.params.id})
+   res.send(answers)
+  
+ })
+
+ Router.get("/get-students/:id", auth, async(req, res) => {
+   const students = await ProjectStudent.find({student_id: req.params.id})
+   res.send(students)
+ })
+
  Router.get("/sections", auth, async(req, res) => {
    const sections = await Section.find()
    res.send(sections)
@@ -22,6 +33,11 @@ const Router = express.Router()
 Router.get("/questions/:id", auth, async(req, res) => {
    let questions = await SectionQuestion.find()
    questions = questions.filter(ques => ques.section._id.toString() === req.params.id)
+   res.send(questions)
+})
+
+Router.get("/get-all-questions", auth, async(req, res) => {
+   const questions = await SectionQuestion.find()
    res.send(questions)
 })
 
@@ -78,6 +94,35 @@ Router.post("/question", [auth, validateBody(validateQuestion)], async(req, res)
    res.status(201).send(quest)
 })
 
+Router.post("/school-answered", [auth, validateBody(validateAnswered)], async(req, res) => {
+   const {student, answers} = req.body
+   for(let i =0; i< answers.length; i++){
+       const question = await SectionQuestion.findById(answers[i].question)
+       const answered = new ProjectQuestionAnswered({
+           profileId: student,
+           question,
+           answer: answers[i].answer
+       })
+
+
+       await answered.save()
+   }
+
+  
+   setTimeout(() => {
+       res.send("Saved....")
+   }, 5000)
+})
+
+
+Router.post("/add-student", [auth,validateBody(validateProjectStudent)], async(req, res) => {
+  const {name, project_id} = req.body
+  const projectStudent = new ProjectStudent({
+   name, project_id
+  })
+  await projectStudent.save()
+  res.send(projectStudent)
+})
 
 
  Router.put("/:id", [auth, validateBody(validateProject)], async(req, res) => {
