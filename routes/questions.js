@@ -101,6 +101,18 @@ Router.post("/school-answered", [auth, validateBody(validateAnswered)], async(re
     }, 5000)
 })
 
+Router.post("/add-section", auth, async(req, res) => {
+    const {question, section, title, options} = req.body
+     const quest = new Question({
+        question,
+        section,
+        title,
+        options
+    })
+    await quest.save()
+    res.send(quest)
+})
+
 
 Router.put("/answer/:id", auth, async(req, res) => {
     const answer = await AnsweredQuestion.findById(req.params.id)
