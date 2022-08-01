@@ -12,6 +12,11 @@ const schoolProfile = mongoose.Schema({
 
 const SchoolProfile = mongoose.model("SchoolProfile", schoolProfile)
 
+const sectionSchema = mongoose.Schema({
+    name: {type: String, required: true}
+})
+
+const SchoolSection = mongoose.model("SchoolSection", sectionSchema)
  
 const profileSchema = mongoose.Schema({
     name: {
@@ -48,6 +53,8 @@ const QuestionSchema = mongoose.Schema({
  },
   
 })
+
+
 const Question = mongoose.model("StudentQuestion",QuestionSchema)
 
 
@@ -112,3 +119,4 @@ module.exports.StudentProfile = StudentProfile
 module.exports.validateAnswered = validateAnswered
 module.exports.SchoolProfile = SchoolProfile
 module.exports.SchoolAnswered = SchoolAnswered
+module.exports.SchoolSection = SchoolSection

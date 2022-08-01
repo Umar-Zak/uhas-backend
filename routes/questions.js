@@ -1,7 +1,7 @@
 const express = require("express")
 const auth = require("../middleware/auth")
 const validateBody = require("../middleware/validateBody")
-const {Question, StudentProfile, AnsweredQuestion, validateAnswered, SchoolAnswered, SchoolProfile}  = require("../model/Questions")
+const {Question, StudentProfile, AnsweredQuestion, validateAnswered, SchoolAnswered, SchoolProfile, SchoolSection}  = require("../model/Questions")
 
 
 const Router = express.Router()
@@ -20,6 +20,11 @@ Router.get("/:section",auth,async (req, res) => {
 Router.get("/get/profiles", auth, async(req, res) => {
     const profiles = await StudentProfile.find()
     res.send(profiles)
+})
+
+Router.get("/get/all-sections", auth, async(req, res) => {
+    const sections = await SchoolSection.find()
+    res.send(sections)
 })
 
 Router.get("/get/schools", auth, async(req, res) => {
@@ -81,6 +86,8 @@ Router.post("/answer", [auth, validateBody(validateAnswered)], async(req, res) =
     }, 3000)
 })
 
+
+
 Router.post("/school-answered", [auth, validateBody(validateAnswered)], async(req, res) => {
     const {student, answers} = req.body
     for(let i =0; i< answers.length; i++){
@@ -101,8 +108,15 @@ Router.post("/school-answered", [auth, validateBody(validateAnswered)], async(re
     }, 5000)
 })
 
+
+
 Router.post("/add-section", auth, async(req, res) => {
     const {question, section, title, options} = req.body
+    let schoolSection = await SchoolSection.findOne({name: section.toLowerCase()})
+    if(!schoolSection){
+        schoolSection = new SchoolSection({name: section.toLowerCase()})
+        await schoolSection.save()
+    }
      const quest = new Question({
         question,
         section,
