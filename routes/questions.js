@@ -16,6 +16,11 @@ Router.get("/:section",auth,async (req, res) => {
     res.send(questions)
 })
 
+Router.get("/get/all-questions",auth,async (req, res) => {
+    const questions = await Question.find()
+    res.send(questions)
+})
+
 
 Router.get("/get/profiles", auth, async(req, res) => {
     const profiles = await StudentProfile.find()
@@ -174,6 +179,15 @@ Router.delete("/school/:id",auth, async (req, res) => {
     await SchoolProfile.deleteOne({_id: req.params.id})
 
     res.send("Student deleted...")
+})
+
+Router.delete("/question/:id",auth, async (req, res) => {
+    const question = await Question.findById(req.params.id)
+    if(!question) return res.status(404).send("This questionnaire is unavailabsle")
+
+    await Question.deleteOne({_id: req.params.id})
+
+    res.send("Questionnaire deleted...")
 })
 
 module.exports = Router

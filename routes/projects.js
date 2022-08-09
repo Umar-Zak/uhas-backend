@@ -155,6 +155,15 @@ Router.delete("/question/:id", auth, async(req, res) => {
    res.send("Deleted")
 })
 
+Router.delete("/student/:id", auth, async(req, res) => {
+   const student = await ProjectStudent.findById(req.params.id)
+   if(!student) return res.status(404).send("This student is unavailable")
+
+   await ProjectStudent.deleteOne({_id: req.params.id})
+
+   res.send("Deleted")
+})
+
  Router.delete("/:id", auth, async(req, res) => {
     const project = await Project.findById(req.params.id)
     if(!project) return res.status(404).send("This project is unavailable")
