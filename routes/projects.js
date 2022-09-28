@@ -1,6 +1,9 @@
 const express = require("express")
 const auth = require("../middleware/auth")
 const validateBody = require("../middleware/validateBody")
+const multer = require("multer")
+const readXlsxFile = require('read-excel-file/node')
+const upload = multer({ dest: 'uploads/' })
 const {Project, validateProject, Section, validateProjectSection, validateQuestion, SectionQuestion, ProjectQuestionAnswered, validateAnswered, validateProjectStudent, ProjectStudent}  = require("../model/project")
 
 
@@ -57,6 +60,47 @@ Router.get("/sections/:id", auth, async(req, res) => {
  })
 
 
+ Router.post("/uploads",[auth,upload.single('file')], async(req,res)=>{
+   readXlsxFile(req.file.path).then(async(rows) => {
+      const section = req.body.section
+      const id = req.body.project_id
+      const participants = rows.filter((row, index) => index > 0)
+      const questions = rows.filter((row, index) => index === 0)[0]
+     
+      
+      for (let i = 0; i < participants.length; i++){
+         const currentParticipants = participants[i]
+         let user = await ProjectStudent.findOne({name: currentParticipants[0], project_id: id})
+         if(!user) {
+            user = ProjectStudent({
+               name: currentParticipants[0],
+               project_id: id
+            })
+            await user.save()
+         }
+
+         for (let j = 1; j < currentParticipants.length; j++){
+            const answered = new ProjectQuestionAnswered({
+               profileId: user._id,
+               question: {
+                  question: questions[j],
+                  section: {
+                     title: section
+                  }
+               },
+               answer: currentParticipants[j]
+           })
+
+           await answered.save()
+           console.log("Answered", answered);
+         }
+          
+      }
+   
+    res.send("Done")
+  })
+  
+  })
 
  Router.post("/", [auth, validateBody(validateProject)], async(req, res) => {
     const project = new Project({
